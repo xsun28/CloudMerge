@@ -1,0 +1,10 @@
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-mapreduce/src/main/java/org/cloudmerge/mapreduce/JobRunner.java
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-mapreduce/src/main/java/org/cloudmerge/mapreduce/MRVCF2TPED.java
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-mapreduce/src/main/java/org/cloudmerge/mapreduce/common.java
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-mapreduce/src/main/java/org/cloudmerge/mapreduce/tfam.java
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-mapreduce/src/main/java/org/cloudmerge/mapreduce/Info.java
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-mapreduce/src/main/java/org/cloudmerge/mapreduce/SequenceFileReadCombiner.java
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-mapreduce/src/main/java/org/cloudmerge/mapreduce/commandParser.java
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-mapreduce/src/main/java/org/cloudmerge/mapreduce/SequenceFileReadCombinerSmall.java
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-mapreduce/src/main/java/org/cloudmerge/mapreduce/CFRecordReader.java
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-mapreduce/src/main/java/org/cloudmerge/mapreduce/VCFMergeMR.java

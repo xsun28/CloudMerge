@@ -1,0 +1,8 @@
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-hbase/src/main/java/org/cloudmerge/hbase/VCFMergeHBase.java
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-hbase/src/main/java/org/cloudmerge/hbase/SequenceFileReadCombiner.java
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-hbase/src/main/java/org/cloudmerge/hbase/TextParser.java
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-hbase/src/main/java/org/cloudmerge/hbase/CFRecordReader.java
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-hbase/src/main/java/org/cloudmerge/hbase/HBaseVCF2TPED.java
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-hbase/src/main/java/org/cloudmerge/hbase/HBaseVCF2TPEDSelectedChr.java
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-hbase/src/main/java/org/cloudmerge/hbase/common.java
+/Users/Xiaobo/git/CloudMerge/CloudMerge/cloudmerge-hbase/src/main/java/org/cloudmerge/hbase/commandParser.java
