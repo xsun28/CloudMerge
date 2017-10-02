@@ -1,4 +1,4 @@
-package org.plinkcloud.hbase;
+package org.cloudmerge.hbase;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

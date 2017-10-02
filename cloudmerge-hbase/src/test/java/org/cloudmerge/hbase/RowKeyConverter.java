@@ -1,4 +1,4 @@
-package org.plinkcloud.hbase;
+package org.cloudmerge.hbase;
 import org.apache.hadoop.hbase.util.Bytes;
 
 public class RowKeyConverter {

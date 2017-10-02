@@ -1,4 +1,4 @@
-package org.plinkcloud.hbase;
+package org.cloudmerge.hbase;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.plinkcloud.hbase.common.Quality;
+import org.cloudmerge.hbase.common.Quality;
 
 
 

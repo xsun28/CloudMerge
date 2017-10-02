@@ -1,4 +1,4 @@
-package org.plinkcloud.hbase;
+package org.cloudmerge.hbase;
 import java.io.IOException;
 
 import org.apache.hadoop.conf.Configuration;

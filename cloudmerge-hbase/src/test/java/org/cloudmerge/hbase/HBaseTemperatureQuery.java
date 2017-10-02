@@ -1,4 +1,4 @@
-package org.plinkcloud.hbase;
+package org.cloudmerge.hbase;
 import java.io.IOException;
 import java.util.Map;
 import java.util.NavigableMap;

@@ -1,4 +1,4 @@
-package org.plinkcloud.hbase;
+package org.cloudmerge.hbase;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -50,7 +50,7 @@ import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-import org.plinkcloud.hbase.common.Quality;
+import org.cloudmerge.hbase.common.Quality;
 
 public class HBaseVCF2TPED extends Configured implements Tool{
 
@@ -352,7 +352,7 @@ public class HBaseVCF2TPED extends Configured implements Tool{
 	    
 	}
 	
-	public static void main(String [] args)throws Exception{   //  hadoop jar plinkcloud-hbase.jar org.plinkcloud.hbase.HBaseVCF2TPED VoTECloud/input/  HBase 0.0001 3 PASS 1-22 true 
+	public static void main(String [] args)throws Exception{   //  hadoop jar plinkcloud-hbase.jar org.cloudmerge.hbase.HBaseVCF2TPED VoTECloud/input/  HBase 0.0001 3 PASS 1-22 true 
 		//long start_time = System.currentTimeMillis();
 		int exit_code = ToolRunner.run(new HBaseVCF2TPED(), args);
 		//long end_time = System.currentTimeMillis();
