@@ -72,19 +72,19 @@ Node Type | CPU | Memory | Disk
 
 ## Build Project
 
-1. Download the project
+1. Download the projectcloudmerge
 	
 	```
-	$ git clone https://github.com/xsun28/PlinkCloud.git
+	$ git clone https://github.com/xsun28/CloudMerge.git
 	```
 2. If you do not want to rebuild the project and your Java version is 7 or higher, you can directly using the jar files from the following locations in your project home directory :
 		
 	Schema	| Location
 	---|---
-	**Priority-queue** |  _plinkcloud-priorityqueue/target/plinkcloud-priorityqueue.jar_
-	**MapReduce** | _plinkcloud-mapreduce/target/plinkcloud-mapreduce.jar_
-	**HBase** | _plinkcloud-hbase/target/plinkcloud-hbase.jar_
-	**Spark** | _plinkcloud-spark/target/plinkcloud-spark.jar_
+	**Priority-queue** |  _cloudmerge-priorityqueue/target/cloudmerge-priorityqueue.jar_
+	**MapReduce** | _cloudmerge-mapreduce/target/cloudmerge-mapreduce.jar_
+	**HBase** | _cloudmerge-hbase/target/cloudmerge-hbase.jar_
+	**Spark** | _cloudmerge-spark/target/cloudmerge-spark.jar_
 
 3. If step 2 is not chosen, you can compile the project from scratch
 	
@@ -93,7 +93,7 @@ Node Type | CPU | Memory | Disk
 	
 	$ mvn package -Dmaven.test.skip=True
 	```
-	Then compiled jar files can be found in the same locations as step 2.
+	Note: Maven must be version 3.1 or higher for success compilation. Compiled jars can be found in the same locations as step 2.
 	<br>
 	<br>
 	<br>
@@ -148,15 +148,15 @@ We provide a Linux script for running VCFTools. You can simply follow the instru
 <br>  
 	
 #### 2. MapReduce schema
-
+cloudmerge
 * Command example
 		
-			$ hadoop jar plinkcloud-mapreduce.jar org.plinkcloud.mapreduce.MRVCF2TPED 
+			$ hadoop jar cloudmerge-mapreduce.jar org.cloudmerge.mapreduce.MRVCF2TPED 
 			-D mapreduce.task.io.sort.mb=600 
 			-D mapreduce.reduce.merge.inmem.threshold=0 
 			-D mapreduce.reduce.input.buffer.percent=1 
-			-i input/ 
-			-o output/ 
+			-i /user/hadoop/input/ 
+			-o /user/hadoop/output/ 
 			-n 93 
 			-r 0.0001 
 			-c 1-25 
@@ -164,7 +164,7 @@ We provide a Linux script for running VCFTools. You can simply follow the instru
 			-q PASS 
 			-g 9
 			-e false
-
+***Note: Include the complete path to input and output directories on HDFS*** 
 * <a name="mapred-config"></a> Suggested configurations:  
 	
 	Name|Value
@@ -185,13 +185,13 @@ We provide a Linux script for running VCFTools. You can simply follow the instru
 	
 #### 3. HBase schema
 
-* Command example
+* Command examplecloudmerge
 
 		$ export HBASE_CONF_DIR=/etc/hbase/conf/
 		
-		$ export HADOOP_CLASSPATH=./plinkcloud-hbase.jar:$HBASE_CONF_DIR:$(hbase classpath):$HADOOP_CLASSPATH
+		$ export HADOOP_CLASSPATH=./cloudmerge-hbase.jar:$HBASE_CONF_DIR:$(hbase classpath):$HADOOP_CLASSPATH
 			
-		$ hadoop jar plinkcloud-hbase.jar  org.plinkcloud.hbase.HBaseVCF2TPEDSelectedChr 			-i input/  
+		$ hadoop jar cloudmerge-hbase.jar  org.cloudmerge.hbase.HBaseVCF2TPEDSelectedChr 			-i input/  
 		-o output/ 
 		-r 0.0001 
 		-n 93 
@@ -202,7 +202,7 @@ We provide a Linux script for running VCFTools. You can simply follow the instru
 		-a false
 
 * <a name="hbase-config"></a> Suggested configurations:  
-	See HBase part in [EMR Configuration](https://s3.amazonaws.com/xsun316/plinkcloud/EMRConfig/EMRConfiguration.json)	
+	See HBase part in [EMR Configuration](https://s3.amazonaws.com/xsun316/cloudmerge/EMRConfig/EMRConfiguration.json)	
 
 	
 * Options
@@ -217,14 +217,14 @@ We provide a Linux script for running VCFTools. You can simply follow the instru
 	 	  
  * Command
 		
-		$ spark-submit --class  org.plinkcloud.spark.VCF2TPEDSparkOneShuffling 
+		$ spark-submit --class  org.cloudmerge.spark.VCF2TPEDSparkOneShuffling 
 		--master yarn 
 		--deploy-mode cluster 
 		--executor-cores 1 
 		--executor-memory 1g 
 		--conf spark.network.timeout=10000000 
 		--conf spark.yarn.executor.memoryOverhead=700 
-		--conf spark.shuffle.memoryFraction=0.5 		plinkcloud-spark.jar 
+		--conf spark.shuffle.memoryFraction=0.5 		cloudmerge-spark.jar 
 		-i input/ 
 		-o output/ 
 		-n 93 
@@ -254,7 +254,7 @@ We provide a Linux script for running VCFTools. You can simply follow the instru
 #### 1. Multiway-merge implementation (benchmark) 
 * Command example
 		
-		$ java -jar plinkcloud-priorityqueue.jar 
+		$ java -jar cloudmerge-priorityqueue.jar 
 			-i input/ 
 			-o result.tped 
 			-c 1-25 
@@ -267,12 +267,12 @@ Note: all recommend platform configurations and platform-specific options are sa
 
 * Command example
  
-		$ hadoop jar plinkcloud-mapreduce.jar org.plinkcloud.mapreduce.VCFMergeMR 
+		$ hadoop jar cloudmerge-mapreduce.jar org.cloudmerge.mapreduce.VCFMergeMR 
 		-D mapreduce.task.io.sort.mb=600 
 		-D mapreduce.reduce.merge.inmem.threshold=0 
 		-D mapreduce.reduce.input.buffer.percent=1 
-		-i input/ 
-		-o output/ 
+		-i /users/hadoop/input/ 
+		-o /usrs/hadoop/output/ 
 		-n 93 
 		-r 0.0001 
 		-c 1-25 
@@ -280,16 +280,17 @@ Note: all recommend platform configurations and platform-specific options are sa
 		-q PASS 
 		-g 9,10 
 		-e false
-	Note: the -g option here refers to all genotype columns which might be more than one.
+	Note: the -g option here refers to all genotype columns which might be more than one. ***And include the complete path to input and output directories on HDFS*** 
+
 
 #### 3. HBase schema
 * Command example
 		
 		$ export HBASE_CONF_DIR=/etc/hbase/conf/
 		
-		$ export HADOOP_CLASSPATH=./plinkcloud-hbase.jar:$HBASE_CONF_DIR:$(hbase classpath):$HADOOP_CLASSPATH
+		$ export HADOOP_CLASSPATH=./cloudmerge-hbase.jar:$HBASE_CONF_DIR:$(hbase classpath):$HADOOP_CLASSPATH
 		
-		$ hadoop jar plinkcloud-hbase.jar org.plinkcloud.hbase.VCFMergeHBase 
+		$ hadoop jar cloudmerge-hbase.jar org.cloudmerge.hbase.VCFMergeHBase 
 		-i input/  
 		-o output/ 
 		-r 0.0001 
@@ -304,14 +305,14 @@ Note: all recommend platform configurations and platform-specific options are sa
 * Command example  
  		
   		$ spark-submit 
-  		--class org.plinkcloud.spark.VCFMergeSpark 
+  		--class org.cloudmerge.spark.VCFMergeSpark 
   		--master yarn 
   		--deploy-mode cluster 
   		--executor-cores 1 
   		--executor-memory 1g 
   		--conf spark.network.timeout=10000000 
   		--conf spark.yarn.executor.memoryOverhead=700 
-  		--conf spark.shuffle.memoryFraction=0.5 		plinkcloud-spark.jar 
+  		--conf spark.shuffle.memoryFraction=0.5 		cloudmerge-spark.jar 
   		-i input/ 
   		-o output/ 
   		-n 93 
