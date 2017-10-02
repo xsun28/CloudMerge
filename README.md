@@ -104,8 +104,9 @@ Node Type | CPU | Memory | Disk
 
 [1. Load Data to HDFS](#loading)  
 [2. Common options to all commands](#options)  
-[2. Merge VCF files into one VCF file](#vcf-merge)  
-[3. Merge VCF files into one TPED file](#tped-merge)
+[3. Merge VCF files into one VCF file](#vcf-merge)  
+[4. Merge VCF files into one TPED file](#tped-merge)  
+[5. Retrieve results from HDFS](#results)
 
 ### <a name="loading"> </a> Loading Data to HDFS
 	$ cd $data_dir/
@@ -322,6 +323,22 @@ Note: all recommend platform configurations and platform-specific options are sa
 	 	
 <br>
 <br>  
+
+### <a name="results"></a> Retrieve results from HDFS
+
+#### 1. MapReduce schema
+For merging to a TPED file  	  
+
+		$hdfs dfs -getmerge ${mapred_output_dir}/chr${i}_result/chr${i}.tped/part* mapredResult.tped 
+
+For merging to a VCF file
+
+		$hdfs dfs -getmerge ${mapred_output_dir}/chr${i}_result/chr${i}.vcf/part* mapredResult.vcf
+		
+#### 2. HBase schema
+		$hdfs dfs -getmerge ${hbase_output_dir}/results/*m* hbaseResult.vcf/tped
+#### 3. Spark schema
+		$hdfs dfs -getmerge ${spark_output_dir}/part* sparkResult.vcf/tped
 	 	
 ## Contact  
 
