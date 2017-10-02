@@ -2,19 +2,19 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>edu.emory.plinkcloud</groupId>
-  <artifactId>plinkcloud-parent</artifactId>
+  <groupId>edu.emory.cloudmerge</groupId>
+  <artifactId>cloudmerge-parent</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <packaging>pom</packaging>
 
-  <name>plinkcloud-parent</name>
+  <name>cloudmerge-parent</name>
   <url>http://maven.apache.org</url>
 <modules>
 
-    <module>plinkcloud-mapreduce</module>
-    <module>plinkcloud-priorityqueue</module>
-    <module>plinkcloud-hbase</module>
-    <module>plinkcloud-spark</module>
+    <module>cloudmerge-mapreduce</module>
+    <module>cloudmerge-priorityqueue</module>
+    <module>cloudmerge-hbase</module>
+    <module>cloudmerge-spark</module>
   </modules>
   <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -74,7 +74,7 @@
               <goal>java</goal>
             </goals>
              <configuration>
-          <mainClass>edu.emory.plinkcloud.plinkcloud.TabixBased.TabixBasedJoin</mainClass>
+          <mainClass>edu.emory.cloudmerge.cloudmerge.TabixBased.TabixBasedJoin</mainClass>
           <arguments>
             <argument>/home/ec2-user/data_93/bgzip/1.vcf.gz</argument>
             <argument>chr1:10000-50000</argument>

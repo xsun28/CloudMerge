@@ -1,0 +1,146 @@
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>edu.emory.cloudmerge</groupId>
+    <artifactId>cloudmerge-parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+  </parent>
+  <groupId>edu.emory.cloudmerge</groupId>
+  <artifactId>cloudmerge-mapreduce</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <name>cloudmerge-mapreduce</name>
+  <url>http://maven.apache.org</url>
+<properties>
+		<emr.version>2.7.3</emr.version>
+	</properties>
+  <dependencies>
+  
+    <dependency>
+			<groupId>org.apache.hadoop</groupId>
+			<artifactId>hadoop-client</artifactId>
+			<!--  <version>${hadoop.version}</version> -->
+			<version>${emr.version}</version>
+			
+		</dependency>
+		<dependency>
+			<groupId>
+		org.apache.hadoop
+		</groupId>
+			<artifactId>
+		hadoop-minicluster
+		</artifactId>
+			<version>
+		${hadoop.version}
+		</version>
+		<scope>test</scope>
+		</dependency>
+  </dependencies>
+  <build>
+    <finalName>cloudmerge-mapreduce</finalName>
+ <plugins>
+    
+		<!--  	<plugin>
+			<groupId>org.apache.maven.plugins</groupId>
+			<artifactId>maven-jar-plugin</artifactId>
+			<version>2.5</version>
+				  <configuration>
+  <archive>
+    <manifest>
+	<mainClass>org.cloudmerge.mapreduce.MRVCF2TOED</mainClass> 
+    </manifest>
+  </archive>
+</configuration>
+		  <executions>
+          <execution>
+          <id>default-jar</id>
+          <phase>package</phase>
+   </execution>
+        </executions> 
+			</plugin> 
+			
+			 <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>3.0.0</version>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+           <appendAssemblyId>false</appendAssemblyId>
+          <archive>
+    <manifest>
+	<mainClass>org.cloudmerge.mapreduce.MRVCF2TPED</mainClass>
+    </manifest>
+  </archive>
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id> 
+            <phase>none</phase> 
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>  -->
+	      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-shade-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>shade</goal>
+            </goals>
+            <configuration>
+              <relocations>
+                <relocation>
+                  <pattern>org.apache</pattern>                               <!-- relocate org.apache and its subdirectories into shaded namespace to solve conflicts -->
+                  <shadedPattern>org.shaded.apache</shadedPattern>
+                   <pattern>com.google</pattern>
+                  <shadedPattern>com.shaded.google</shadedPattern>
+                 <!--   <excludes>
+                    <exclude>org.codehaus.plexus.util.xml.Xpp3Dom</exclude>
+                    <exclude>org.codehaus.plexus.util.xml.pull.*</exclude>
+                  </excludes>  -->
+                </relocation>
+              </relocations>
+                <transformers>
+                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                <!--  <mainClass>org.cloudmerge.mapreduce.MRVCF2TPED</mainClass>  -->
+                </transformer>
+              </transformers>
+              <minimizeJar>true</minimizeJar>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>		
+			
+     <!--  <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.5.0</version>
+        <executions>
+          <execution>
+	<phase>compile</phase>
+            <goals>
+              <goal>java</goal>
+            </goals>
+             <configuration>
+          <mainClass>edu.emory.cloudmerge.cloudmerge.TabixBased.TabixBasedJoin</mainClass>
+          <arguments>
+            <argument>/home/ec2-user/data_93/bgzip/1.vcf.gz</argument>
+            <argument>chr1:10000-50000</argument>
+          </arguments>
+       
+        </configuration> 
+          </execution>
+        </executions>
+     
+      </plugin> -->
+    </plugins>
+  </build>
+  
+</project>
