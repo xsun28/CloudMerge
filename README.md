@@ -329,16 +329,16 @@ Note: all recommend platform configurations and platform-specific options are sa
 #### 1. MapReduce schema
 For merging to a TPED file  	  
 
-		$hdfs dfs -getmerge ${mapred_output_dir}/chr${i}_result/chr${i}.tped/part* mapredResult.tped 
+	$hdfs dfs -getmerge ${mapred_output_dir}/chr${i}_result/chr${i}.tped/part* mapredResult.tped 
 
 For merging to a VCF file
 
-		$hdfs dfs -getmerge ${mapred_output_dir}/chr${i}_result/chr${i}.vcf/part* mapredResult.vcf
+	$hdfs dfs -getmerge ${mapred_output_dir}/chr${i}_result/chr${i}.vcf/part* mapredResult.vcf
 		
 #### 2. HBase schema
-		$hdfs dfs -getmerge ${hbase_output_dir}/results/*m* hbaseResult.vcf/tped
+	$hdfs dfs -getmerge ${hbase_output_dir}/results/*m* hbaseResult.vcf/tped
 #### 3. Spark schema
-		$hdfs dfs -getmerge ${spark_output_dir}/part* sparkResult.vcf/tped
+	$hdfs dfs -getmerge ${spark_output_dir}/part* sparkResult.vcf/tped
 	 	
 ## Contact  
 
