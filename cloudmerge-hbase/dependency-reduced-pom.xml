@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
-    <artifactId>plinkcloud-parent</artifactId>
-    <groupId>edu.emory.plinkcloud</groupId>
+    <artifactId>cloudmerge-parent</artifactId>
+    <groupId>edu.emory.cloudmerge</groupId>
     <version>0.0.1-SNAPSHOT</version>
   </parent>
   <modelVersion>4.0.0</modelVersion>
-  <groupId>edu.emory.plinkcloud</groupId>
-  <artifactId>plinkcloud-hbase</artifactId>
-  <name>plinkcloud-hbase</name>
+  <groupId>edu.emory.cloudmerge</groupId>
+  <artifactId>cloudmerge-hbase</artifactId>
+  <name>cloudmerge-hbase</name>
   <version>0.0.1-SNAPSHOT</version>
   <url>http://maven.apache.org</url>
   <build>
