@@ -6,6 +6,7 @@ package org.cloudmerge.hbase;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -40,6 +41,7 @@ import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.io.compress.Lz4Codec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Partitioner;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
@@ -119,6 +121,16 @@ public class HBaseVCF2TPEDSelectedChr extends Configured implements Tool{
 		@Override
 		protected void cleanup(Context context) throws IOException, InterruptedException {
 			mos.close();
+		}
+	}
+	
+	protected static class samplingPartitioner extends Partitioner<Text,NullWritable>{
+		@Override
+		public int getPartition(Text key, NullWritable val,int num_partitions){
+			String keystr = key.toString();
+			int index = keystr.indexOf("-");
+			int chr = Integer.parseInt(keystr.substring(0, index));
+			return chr-1;
 		}
 	}
 	
@@ -297,6 +309,7 @@ public class HBaseVCF2TPEDSelectedChr extends Configured implements Tool{
 		String chr_range = cmd.getOptionValue("c");
 		String start_chr = chr_range.substring(0,chr_range.indexOf("-"));
 		String end_chr = chr_range.substring(chr_range.indexOf("-")+1);
+		int chrnum = Integer.parseInt(end_chr) - Integer.parseInt(start_chr)+1;
 		boolean ordered = true;
 		if(cmd.hasOption("s"))
 			ordered = Boolean.parseBoolean(cmd.getOptionValue("s"));
@@ -320,9 +333,10 @@ public class HBaseVCF2TPEDSelectedChr extends Configured implements Tool{
 			FileOutputFormat.setOutputPath(sample_job,sample_outputPath);
 			sample_job.setMapperClass(VCFSampleMapper.class);
 			sample_job.setReducerClass(VCFSampleReducer.class);
+			sample_job.setPartitionerClass(samplingPartitioner.class);
 			sample_job.setOutputKeyClass(Text.class);
 			sample_job.setOutputValueClass(NullWritable.class);
-			sample_job.setNumReduceTasks(1);
+			sample_job.setNumReduceTasks(chrnum);
 			sample_job.getConfiguration().setBoolean("mapred.compress.map.output", true);
 			sample_job.getConfiguration().setClass("mapred.map.output.compression.codec", Lz4Codec.class, CompressionCodec.class);
 			MultipleOutputs.addNamedOutput(sample_job, "ChrMos",SequenceFileOutputFormat.class, Text.class, Text.class);
@@ -333,10 +347,15 @@ public class HBaseVCF2TPEDSelectedChr extends Configured implements Tool{
 			code = sample_job.waitForCompletion(true)?0:1;
 		
 			//Create TPED table with predefined boundaries
-			String sample_file = new StringBuilder().append(outputPath)
-					.append("/sample/part-r-00000.lz4").toString();
-			System.out.println("sample_file "+sample_file);
-			List<String> boundaries =  common.getRegionBoundaries(conf,sample_file,region_num);		
+			List<String> sample_files = new ArrayList<String>();
+			for(int i=0;i<=chrnum;i++){
+				String sample_file = i<10 ? new StringBuilder().append(outputPath)
+						.append("/sample/part-r-0000"+i+".lz4").toString(): new StringBuilder()
+						.append(outputPath).append("/sample/part-r-000"+i+".lz4").toString();
+				System.out.println("sample_file "+sample_file);
+				sample_files.add(sample_file);
+			}
+			List<String> boundaries =  common.getRegionBoundaries(conf,sample_files,region_num);		
 			common.createTable(admin,boundaries,"TPED");
 		}
 		

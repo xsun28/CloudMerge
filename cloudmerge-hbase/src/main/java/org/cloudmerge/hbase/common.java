@@ -93,20 +93,28 @@ public class common {
 	}
 	
 	
-	public static List<String> getRegionBoundaries(Configuration conf, String sample_path, int region_num) throws IOException{//the result region is 0 to first_boundary, ....., last boundary to maximum
+	public static List<String> getRegionBoundaries(Configuration conf, List<String> sample_paths, int region_num) throws IOException{//the result region is 0 to first_boundary, ....., last boundary to maximum
 		int boundary_num = region_num -1;
 		List<String> boundaries = new ArrayList<>(boundary_num);
 		List<String> temp = new ArrayList<>();
-		FileSystem fs = FileSystem.get(URI.create(sample_path),conf);
-		if(fs.exists(new Path(sample_path))){
-			CompressionCodecFactory factory = new CompressionCodecFactory(conf);
-			CompressionCodec codec = factory.getCodec(new Path(sample_path));
-			BufferedReader reader = new BufferedReader(new InputStreamReader(codec.createInputStream(fs.open(new Path(sample_path)))));
-			String line = "";
-			while(null != ( line = reader.readLine()))
-				{temp.add(line);
-					System.out.println("Boundary lines: "+line);
-				}
+		for(String sample_path:sample_paths){
+			FileSystem fs = FileSystem.get(URI.create(sample_path),conf);
+			if(fs.exists(new Path(sample_path))){
+				CompressionCodecFactory factory = new CompressionCodecFactory(conf);
+				CompressionCodec codec = factory.getCodec(new Path(sample_path));
+				BufferedReader reader = new BufferedReader(new InputStreamReader(codec.createInputStream(fs.open(new Path(sample_path)))));
+				String line = "";
+				while(null != ( line = reader.readLine()))
+					{temp.add(line);
+						System.out.println("Boundary lines: "+line);
+					}
+			}
+		}
+		if(temp.size()==0){
+			TextParser parser = new TextParser();
+			String boundary = parser.getRowKey("0", "0");    //if no sampleout boundary, use 00-000000000 as the boundary
+			boundaries.add(boundary);
+		}else{
 			int step = (temp.size()+1)/region_num;
 			for(int i = 0; i<temp.size(); i++){
 				if((i+1)%step == 0) {
@@ -114,10 +122,6 @@ public class common {
 					boundaries.add(temp.get(i));
 				}
 			}
-		}else{
-			TextParser parser = new TextParser();
-			String boundary = parser.getRowKey("0", "0");    //if no sampleout boundary, use 00-000000000 as the boundary
-			boundaries.add(boundary);
 		}
 		return boundaries;		
 	}

@@ -149,7 +149,7 @@ We provide a Linux script for running VCFTools. You can simply follow the instru
 <br>  
 	
 #### 2. MapReduce schema
-cloudmerge
+
 * Command example
 		
 			$ hadoop jar cloudmerge-mapreduce.jar org.cloudmerge.mapreduce.MRVCF2TPED 
@@ -186,7 +186,7 @@ cloudmerge
 	
 #### 3. HBase schema
 
-* Command examplecloudmerge
+* Command example
 
 		$ export HBASE_CONF_DIR=/etc/hbase/conf/
 		

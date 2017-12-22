@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -261,7 +262,7 @@ public class MRVCF2TPED extends Configured implements Tool {
 
 	public static Configuration getSecondJobConf( Tool tool, Configuration conf, int chr, Path inputPath, Path outputPath, String basePath, 
 			double samplerate, int indno, long sampleNum)
-		 throws IOException, ClassNotFoundException, InterruptedException{
+		 throws IOException, ClassNotFoundException, InterruptedException,URISyntaxException{
 //		conf.setBoolean("mapreduce.map.speculative", false);
 		Job orderJob = Job.getInstance(conf,"Chr"+chr+" job");
 		orderJob.setJarByClass(tool.getClass());
@@ -282,8 +283,8 @@ public class MRVCF2TPED extends Configured implements Tool {
 	
 		String file = basePath+"/part-r-000";  //path of the partition list files eg. VoTECloud/output/part-r-00022
 		if(chr > 10) file += (chr-1);
-		else if(chr < 10) file += "0"+(chr-1);
-		else file += "09";
+		else if(chr <= 10) file += "0"+(chr-1);
+
 		Path partitionFile = new Path(file);
 //		String samplenumFileStr = basePath + "/chr"+chrm+"samplenum";
 //		Path samplenumFile = new Path(samplenumFileStr);
@@ -300,7 +301,7 @@ public class MRVCF2TPED extends Configured implements Tool {
 			
 			TotalOrderPartitioner.setPartitionFile(orderJob.getConfiguration(), partitionFile);// set the partition file to the output file from partitionreducer
 			orderJob.setNumReduceTasks(reducernum);
-		
+//			orderJob.addCacheFile(partitionFile.toUri());
 		}else{
 			
 			Path regenerated_partitionFile = new Path(outputPath + "_partitions.lst"); //regenerate the partition list using the TotalOrderPartitioner for sparse chromsome which doesn't have a sampled-out list
@@ -311,11 +312,13 @@ public class MRVCF2TPED extends Configured implements Tool {
 				orderJob.setInputFormatClass(SequenceFileReadCombinerSmall.class);
 				TotalOrderPartitioner.setPartitionFile(orderJob.getConfiguration(), regenerated_partitionFile);
 				InputSampler.writePartitionFile(orderJob, new InputSampler.RandomSampler<LongWritable, Text>(samplerate*1000, num, 1));			
-		}else{// if there is already re-generated partition file from previous run, use it
+			}else{// if there is already re-generated partition file from previous run, use it
 				orderJob.setNumReduceTasks((indno/93)*4);
 				TotalOrderPartitioner.setPartitionFile(orderJob.getConfiguration(), regenerated_partitionFile);
 			}
+//			orderJob.addCacheFile(regenerated_partitionFile.toUri());
 		}
+		
 		return orderJob.getConfiguration();
 	}
 	

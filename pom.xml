@@ -15,10 +15,11 @@
     <module>cloudmerge-priorityqueue</module>
     <module>cloudmerge-hbase</module>
     <module>cloudmerge-spark</module>
-  </modules>
+    <module>cloudmerge-1000genome</module>
+</modules>
   <properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.7</java.version>
+		<java.version>1.8</java.version>
 		<hadoop.version>2.6.0</hadoop.version>
 	</properties>
 
