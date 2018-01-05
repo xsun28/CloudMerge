@@ -184,19 +184,19 @@ We provide a Linux script for running VCFTools. You can simply follow the instru
 #### 2. MapReduce schema
 * Command example
 		
-			$ hadoop jar cloudmerge-mapreduce.jar org.cloudmerge.mapreduce.MRVCF2TPED 
-			-D mapreduce.task.io.sort.mb=600 
-			-D mapreduce.reduce.merge.inmem.threshold=0 
-			-D mapreduce.reduce.input.buffer.percent=1 
-			-i /user/hadoop/input/ 
-			-o /user/hadoop/output/ 
-			-n 93 
-			-r 0.0001 
-			-c 1-25 
-			-s false 
-			-q PASS 
-			-g 9
-			-e false
+		$ hadoop jar cloudmerge-mapreduce.jar org.cloudmerge.mapreduce.MRVCF2TPED 
+		-D mapreduce.task.io.sort.mb=600 
+		-D mapreduce.reduce.merge.inmem.threshold=0 
+		-D mapreduce.reduce.input.buffer.percent=1 
+		-i /user/hadoop/input/ 
+		-o /user/hadoop/output/ 
+		-n 93 
+		-r 0.0001 
+		-c 1-25 
+		-s false 
+		-q PASS 
+		-g 9
+		-e false
 ***Note: Include the complete path to input and output directories on HDFS*** 
 * <a name="mapred-config"></a> Suggested configurations  
 	
