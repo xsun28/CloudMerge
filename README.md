@@ -40,7 +40,7 @@ Node Type | CPU | Memory | Disk
     * [Install Hadoop MapReduce](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/ClusterSetup.html)
     * [Install HBase](http://hbase.apache.org/book.html#getting_started)
     * [Install Spark](https://spark.apache.org/docs/latest/spark-standalone.html) 
-    * [Install StarCluster](http://mpitutorial.com/tutorials/launching-an-amazon-ec2-mpi-cluster/)		
+    * [Install StarCluster](http://mpitutorial.com/tutorials/launching-an-amazon-ec2-mpi-cluster/)  		
     	We also provide a StarCluster [configuration file](https://s3.amazonaws.com/xsun316/StarClusterConfig/config) and a [bootstrap file](https://s3.amazonaws.com/xsun316/StarClusterConfig/bootstrap.sh) used in our test.     
 * Bundled installation
     * [Install Cloudera Manager](http://www.cloudera.com/documentation/manager/5-1-x/Cloudera-Manager-Installation-Guide/Cloudera-Manager-Installation-Guide.html)
@@ -74,7 +74,7 @@ Node Type | CPU | Memory | Disk
 
 ## Build Project
 
-1. Download the projectcloudmerge
+1. Download the project
 	
 	```
 	$ git clone https://github.com/xsun28/CloudMerge.git
