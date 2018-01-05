@@ -96,13 +96,17 @@ public class VCFMergeMR extends Configured implements Tool {
 			if(null != qual && qual.compareTo(qual_filter) >= 0){
 			
 				String[] fields = line.split("\\s+");
-				String chrnum = fields[0].substring(fields[0].indexOf("r")+1).trim();
+				String chrnum = "";
+				if(fields[0].toLowerCase().startsWith("chr"))
+					chrnum = fields[0].substring(fields[0].indexOf("r")+1).trim();
+				else 
+					chrnum = fields[0].trim();
 				chrm = common.parseChrnum(chrnum);
 				if(chrm >= startchr && chrm <= endchr){         //filter out chrm outside of the chrm range
 					records++;
 					context.getCounter(ChrNumCounter.values()[chrm-1]).increment(1);  //count the chr records num
 					String outputFile;			
-					outputFile = fields[0].trim()+"/part";				//output file for this record  
+					outputFile = "chr"+chrnum+"/part";				//output file for this record  
 					String pos = fields[1].trim();
             		String ref = fields[3].trim();
             		String alts = fields[4].trim();

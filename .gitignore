@@ -1,3 +1,5 @@
 /target/
 /logs/
 /src/
+/cloudmerge-hpc/config
+/cloudmerge-hpc/bootstrap.sh

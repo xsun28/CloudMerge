@@ -3,6 +3,7 @@ package org.cloudmerge.hbase;
 
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -335,6 +336,7 @@ public class VCFMergeHBase extends Configured implements Tool{
 		String chr_range = cmd.getOptionValue("c");
 		String start_chr = chr_range.substring(0,chr_range.indexOf("-"));
 		String end_chr = chr_range.substring(chr_range.indexOf("-")+1);
+		int chrnum = Integer.parseInt(end_chr) - Integer.parseInt(start_chr)+1;
 		boolean ordered = true;
 		if(cmd.hasOption("s"))
 			ordered = Boolean.parseBoolean(cmd.getOptionValue("s"));
@@ -371,10 +373,15 @@ public class VCFMergeHBase extends Configured implements Tool{
 			code = sample_job.waitForCompletion(true)?0:1;
 		
 			//Create MERGEDVCF table with predefined boundaries
-			String sample_file = new StringBuilder().append(outputPath)
-					.append("/sample/part-r-00000.lz4").toString();
-			System.out.println("sample_file "+sample_file);
-			List<String> boundaries =  common.getRegionBoundaries(conf,sample_file,region_num);		
+			List<String> sample_files = new ArrayList<String>();
+			for(int i=0;i<=chrnum;i++){
+				String sample_file = i<10 ? new StringBuilder().append(outputPath)
+						.append("/sample/part-r-0000"+i+".lz4").toString(): new StringBuilder()
+						.append(outputPath).append("/sample/part-r-000"+i+".lz4").toString();
+				System.out.println("sample_file "+sample_file);
+				sample_files.add(sample_file);
+			}
+			List<String> boundaries =  common.getRegionBoundaries(conf,sample_files,region_num);		
 			common.createTable(admin,boundaries,"MERGEDVCF");
 		}
 		

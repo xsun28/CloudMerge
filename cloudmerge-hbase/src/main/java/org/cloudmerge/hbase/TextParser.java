@@ -100,7 +100,10 @@ public class TextParser {
 		quality = getQuality(line);
 		if(null != quality){
 		String[] fields = line.split("\\s+");
-		chrm = fields[0].substring(fields[0].indexOf("r")+1).trim();
+		if(fields[0].toLowerCase().startsWith("chr"))
+			chrm = fields[0].substring(fields[0].indexOf("r")+1).trim();
+		else 
+			chrm = fields[0].trim();
 		chr_num = parseChrnum(chrm);
 		genotype = parseGenotype(line, genotype_col);
 		pos = fields[1].trim();
@@ -120,7 +123,10 @@ public class TextParser {
 		for(String col: genotype_cols)
 			gt_cols_set.add(Integer.parseInt(col.trim()));
 		gt_col_nums = gt_cols_set.size();
-		chrm = fields[0].substring(fields[0].indexOf("r")+1).trim();
+		if(fields[0].toLowerCase().startsWith("chr"))
+			chrm = fields[0].substring(fields[0].indexOf("r")+1).trim();
+		else 
+			chrm = fields[0].trim();
 		chr_num = parseChrnum(chrm);
 		pos = fields[1].trim();
 		rs =  fields[2].trim();

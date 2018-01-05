@@ -30,6 +30,7 @@ Node Type | CPU | Memory | Disk
 	Hadoop | Hadoop-2.7.3
 	HBase | HBase-1.3.0
 	Spark | Spark-2.1.0
+	StarCluster | StarCluster-0.95.6
 	
 	Note: If you are using different versions of software, please update dependencies in the pom files of corresponding project, and recompile the project.  
 
@@ -39,7 +40,9 @@ Node Type | CPU | Memory | Disk
 * Separate installation   
     * [Install Hadoop MapReduce](https://hadoop.apache.org/docs/stable/hadoop-project-dist/hadoop-common/ClusterSetup.html)
     * [Install HBase](http://hbase.apache.org/book.html#getting_started)
-    * [Install Spark](https://spark.apache.org/docs/latest/spark-standalone.html)
+    * [Install Spark](https://spark.apache.org/docs/latest/spark-standalone.html) 
+    * [Install StarCluster](http://mpitutorial.com/tutorials/launching-an-amazon-ec2-mpi-cluster/)		
+    	We also provide a StarCluster [configuration file](https://s3.amazonaws.com/xsun316/StarClusterConfig/config) and a [bootstrap file](https://s3.amazonaws.com/xsun316/StarClusterConfig/bootstrap.sh) used in our test.     
 * Bundled installation
     * [Install Cloudera Manager](http://www.cloudera.com/documentation/manager/5-1-x/Cloudera-Manager-Installation-Guide/Cloudera-Manager-Installation-Guide.html)
 * Launch an pre-installed AWS Elastic-M cluster
@@ -52,7 +55,7 @@ Node Type | CPU | Memory | Disk
  
  * [Install VCFTools](http://vcftools.sourceforge.net/examples.html)
  * [Install Tabix](http://www.danielecook.com/installing-tabix-and-samtools-on-mac/)
- 	
+    	
 ### 4. [Maven Installation](https://maven.apache.org/install.html)
 
 ### 5. [Git Installation](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git)
@@ -64,7 +67,7 @@ Node Type | CPU | Memory | Disk
 * Type the following command to unzip downloaded files into 93 bzipped VCF files.  
    		
 		$ tar xzf encrypted.tar.gz  
-	
+* For much larger scale of data, we suggest to use individual VCF files by splitting VCF files from 1000Genome project, which can be downloaded [here](ftp://ftp.1000genomes.ebi.ac.uk/vol1/ftp/release/20130502/).  Note: A 1000Genome VCF file is already a merged file of all the studying subjects. To run the test, you will need to split the file into individual VCF files using [Data Slicer](http://www.internationalgenome.org/data-slicer), [a combination of tabix and VCFtools](http://www.internationalgenome.org/faq/can-i-get-genotypes-specific-individualpopulation-your-vcf-files/), or our much faster and more convenient **[cloudmerge-1000genome](#1000genome)** software.	
 	
 <br>
 
@@ -81,9 +84,12 @@ Node Type | CPU | Memory | Disk
 		
 	Schema	| Location
 	---|---
-	**Priority-queue** |  _cloudmerge-priorityqueue/target/cloudmerge-priorityqueue.jar_
-	**MapReduce** | _cloudmerge-mapreduce/target/cloudmerge-mapreduce.jar_
+	**1000Genome Splitter** | _cloudmerge-1000genome/target/cloudmerge-1000genome.jar_
 	**HBase** | _cloudmerge-hbase/target/cloudmerge-hbase.jar_
+	**HPC** | _cloudmerge-hpc/*.py_
+	**MapReduce** | _cloudmerge-mapreduce/target/cloudmerge-mapreduce.jar_
+	**Parallel priority-queue** | _cloudmerge-priorityqueue/target/cloudmerge-parallelpriorityqueue.jar_, _cloudmerge-priorityqueue/target/cloudmerge-ppqsplitdata.jar_
+	**Priority-queue** |  _cloudmerge-priorityqueue/target/cloudmerge-priorityqueue.jar_
 	**Spark** | _cloudmerge-spark/target/cloudmerge-spark.jar_
 
 3. If step 2 is not chosen, you can compile the project from scratch
@@ -101,13 +107,30 @@ Node Type | CPU | Memory | Disk
 ---	
 
 ## Usage  
+[1. Split 1000Genome VCF](#1000genome)  
+[2. Load Data to HDFS](#loading)  
+[3. Common options to all commands](#options)  
+[4. Merge VCF files into one VCF file](#vcf-merge)  
+[5. Merge VCF files into one TPED file](#tped-merge)  
+[6. Retrieve results from HDFS](#results)
+### <a name="1000genome"> </a> Split 1000Genome VCF
 
-[1. Load Data to HDFS](#loading)  
-[2. Common options to all commands](#options)  
-[3. Merge VCF files into one VCF file](#vcf-merge)  
-[4. Merge VCF files into one TPED file](#tped-merge)  
-[5. Retrieve results from HDFS](#results)
-
+* Options  
+	
+	Option|Meaning|Mandatory
+	---|---|---
+	**-i** | Input directory | Yes
+	**-o** | Output directory | Yes 
+	**-c** | Chromosomes range | Yes
+	**-d** | ID of samples to be extracted | No
+	**-p** | Genomic position range to be extractd | No
+	**-n**	| Number of samples to be extracted | Yes
+	**-s**	| If all chromosomes of a sample are stacked in one file? | No
+* Example  
+  We provide a script for indexing 1000Genome VCF files using tabix and splitting 1000Genome VCFs into individual files of interested samples and genomic regions. To run the script:   
+	
+		$ cp -p  $project_home_dir/src/main/resources/vcftools-merge.sh .    
+	
 ### <a name="loading"> </a> Loading Data to HDFS
 	$ cd $data_dir/
 	$ hdfs dfs -mkdir -p $input_dir
@@ -149,7 +172,6 @@ We provide a Linux script for running VCFTools. You can simply follow the instru
 <br>  
 	
 #### 2. MapReduce schema
-
 * Command example
 		
 			$ hadoop jar cloudmerge-mapreduce.jar org.cloudmerge.mapreduce.MRVCF2TPED 
@@ -166,7 +188,7 @@ We provide a Linux script for running VCFTools. You can simply follow the instru
 			-g 9
 			-e false
 ***Note: Include the complete path to input and output directories on HDFS*** 
-* <a name="mapred-config"></a> Suggested configurations:  
+* <a name="mapred-config"></a> Suggested configurations  
 	
 	Name|Value
 	--|--
@@ -216,7 +238,7 @@ We provide a Linux script for running VCFTools. You can simply follow the instru
 
 #### 4. Spark schema	
 	 	  
- * Command
+ * Command example
 		
 		$ spark-submit --class  org.cloudmerge.spark.VCF2TPEDSparkOneShuffling 
 		--master yarn 

@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 public class SampleSplitter {
 	protected final Logger logger = LoggerFactory.getLogger(getClass());
-	private Map<String,List<String>> chrs_pos;
+	private Map<Integer,List<String>> chrs_pos;
 	private ExecutorService pool;
 	private static boolean global_start = true;
 	private static boolean stack = false;
@@ -38,14 +38,15 @@ public class SampleSplitter {
 //		private BufferedReader bf;
 		
 		private TabixReader tr;
-		private String output, chr;
+		private String output; 
+		private int chr;
 		private int num;
 		private List<String> pos;
 		private String datasets = null;
 //		private String locker = getClass().getName().intern();
-		public split_chr(String input,String output,String chr,List<String> pos,String datasets,int sample_num){
+		public split_chr(String input,String output,int chr,List<String> pos,String datasets,int sample_num){
 			try{
-				String path = input+prefix+chr+suffix;
+				String path = input+prefix+chr2str(chr)+suffix;
 //				this.bf = new BufferedReader(new FileReader(path));
 				this.tr = new TabixReader(path);
 				this.output = output;
@@ -192,7 +193,7 @@ public class SampleSplitter {
 					if(SampleSplitter.stack)
 						file = output+sample+".bz2";
 					else
-						file = output+chr+"_"+sample+".bz2";
+						file = output+chr2str(chr)+"_"+sample+".bz2";
 					CompressorOutputStream cos =  new CompressorStreamFactory().createCompressorOutputStream(
 							CompressorStreamFactory.BZIP2,new BufferedOutputStream (new FileOutputStream(file,true)));
 					writers.add(new PrintWriter(cos));
@@ -221,12 +222,12 @@ public class SampleSplitter {
 			pool = Executors.newCachedThreadPool();		
 			if(!stack){
 				List<Callable<Integer>> tasks = new ArrayList<>();
-				for(Map.Entry<String, List<String>> entry:this.chrs_pos.entrySet())
+				for(Map.Entry<Integer, List<String>> entry:this.chrs_pos.entrySet())
 					tasks.add(new split_chr(input,output,entry.getKey(),entry.getValue(),datasets,sample_num));
 				pool.invokeAll(tasks);
 				System.out.println("going to end");
 			}else{
-				for(Map.Entry<String, List<String>> entry:this.chrs_pos.entrySet()){
+				for(Map.Entry<Integer, List<String>> entry:this.chrs_pos.entrySet()){
 					FutureTask <Integer> task = new FutureTask<>(new split_chr(input,output,entry.getKey(),entry.getValue(),datasets,sample_num));
 					pool.submit(task);
 					task.get();
@@ -242,29 +243,66 @@ public class SampleSplitter {
 		}
 	}
 
-
+	private int chr2int(String chr){
+		int chrint = 0;
+		switch(chr.toUpperCase()){
+		case "X":
+			chrint = 23;
+			break;
+		case "Y":
+			chrint = 24;
+			break;
+		case "MT":
+			chrint = 25;
+			break;
+		default:
+			chrint = Integer.parseInt(chr);
+			break;
+		}
+		return chrint;
+	}
 	
-	private Map<String,List<String>> parse_chr(String chrs, String pos){
-		Map<String,List<String>> chr_pos_map = new HashMap<>();
+	private String chr2str(int chr){
+		String chrstr = "";
+		switch(chr){
+		case 23:
+			chrstr = "X";
+			break;
+		case 24:
+			chrstr = "Y";
+			break;
+		case 25:
+			chrstr = "MT";
+			break;
+		default:
+			chrstr = ""+chr;
+			break;
+		}
+		return chrstr;
+	}
+	
+	private Map<Integer,List<String>> parse_chr(String chrs, String pos){
+		Map<Integer,List<String>> chr_pos_map = new HashMap<>();
 
 		int hyphen = chrs.indexOf("-");
-		int start = hyphen==-1 ? Integer.parseInt(chrs) : Integer.parseInt(chrs.substring(0,chrs.indexOf("-")));
-		int end = hyphen==-1 ? start : Integer.parseInt(chrs.substring(chrs.indexOf("-")+1));
+		int start = hyphen==-1 ? chr2int(chrs) : chr2int(chrs.substring(0,chrs.indexOf("-")));
+		int end = hyphen==-1 ? start : chr2int(chrs.substring(chrs.indexOf("-")+1));
 		for(int i=start;i<=end;i++)
-			chr_pos_map.put(String.valueOf(i), new ArrayList<String>());	
+			chr_pos_map.put(i, new ArrayList<String>());	
 		System.out.println("chromosome from "+start+" to "+end);
 		if(pos!=null){
 			String[] positions = pos.trim().split(",");
 			for(String p: pos.trim().split(",")){
 				int chr_index = p.indexOf(":");
-				String chr = chr_index == -1?pos:p.substring(0,chr_index);
+				int chr = chr_index == -1?chr2int(p):chr2int(p.substring(0,chr_index));
 	//			int start_end[] = new int[2];
 	//			int pos_index = p.indexOf("-");
 	//			int start_pos = pos_index ==-1? Integer.parseInt(p.substring(chr_index+1)):Integer.parseInt(chrs.substring(chr_index+1,pos_index));
 	//			int end_pos = pos_index == -1? -1: Integer.parseInt(chrs.substring(pos_index+1));
 	//			start_end[0] = start_pos;
 	//			start_end[1] = end_pos;
-				chr_pos_map.get(chr).add(p);
+				if(chr_pos_map.containsKey(chr))
+					chr_pos_map.get(chr).add(p);
 			}
 		}
 		return chr_pos_map;

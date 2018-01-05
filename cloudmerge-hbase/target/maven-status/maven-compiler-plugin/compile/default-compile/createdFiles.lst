@@ -13,6 +13,7 @@ org/cloudmerge/hbase/VCFMergeHBase$VCFSampleMapper.class
 org/cloudmerge/hbase/HBaseVCF2TPED$ExportMapper.class
 org/cloudmerge/hbase/HBaseVCF2TPEDSelectedChr$AdditiveBulkLoadingMapper.class
 org/cloudmerge/hbase/common$Quality.class
+org/cloudmerge/hbase/HBaseVCF2TPEDSelectedChr$samplingPartitioner.class
 org/cloudmerge/hbase/HBaseVCF2TPED$BulkLoadingMapper.class
 org/cloudmerge/hbase/HBaseVCF2TPEDSelectedChr$ExportMapper.class
 org/cloudmerge/hbase/HBaseVCF2TPEDSelectedChr$VCFSampleReducer.class

@@ -23,9 +23,14 @@
     <artifactId>commons-cli</artifactId>
     <version>1.2</version>
 </dependency>
+<dependency>
+    <groupId>com.github.samtools</groupId>
+    <artifactId>htsjdk</artifactId>
+    <version>2.9.1</version>
+</dependency>
 </dependencies>
   <build>
-    <finalName>cloudmerge-priorityqueue</finalName>
+    <!-- <finalName>cloudmerge-priorityqueue</finalName> -->
   <plugins>  	
 			<plugin>
 			<groupId>org.apache.maven.plugins</groupId>
@@ -49,24 +54,70 @@
 			      <plugin>
         <artifactId>maven-assembly-plugin</artifactId>
         <version>3.0.0</version>
-        <configuration>
+       <configuration>
           <descriptorRefs>
             <descriptorRef>jar-with-dependencies</descriptorRef>
           </descriptorRefs>
            <appendAssemblyId>false</appendAssemblyId>
-          <archive>
+<!--           <archive>
     <manifest>
-	<mainClass>org.cloudmerge.priorityqueue.MultiwayMergeVCF2TPED</mainClass>
+		 <mainClass>org.cloudmerge.priorityqueue.MultiwayMergeVCF2TPED</mainClass>
+	<mainClass>org.cloudmerge.priorityqueue.MultiwayMergeVCF2TPEDParallel</mainClass>
     </manifest>
-  </archive>
-        </configuration>
+  </archive> -->
+        </configuration> 
         <executions>
-          <execution>
-            <id>make-assembly</id> <!-- this is used for inheritance merges -->
-            <phase>package</phase> <!-- bind to the packaging phase -->
+<!--           <execution>
+            <id>make-assembly</id> this is used for inheritance merges
+            <phase>package</phase> bind to the packaging phase
             <goals>
               <goal>single</goal>
             </goals>
+          </execution> -->
+          <execution>
+            <id>pq</id>
+                 <phase>package</phase> 
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <archive>
+                <manifest>
+                  <mainClass>org.cloudmerge.priorityqueue.MultiwayMergeVCF2TPED</mainClass>
+                </manifest>
+              </archive>
+              <finalName>cloudmerge-priorityqueue</finalName>
+            </configuration>
+          </execution>
+                    <execution>
+            <id>build-a</id>
+                 <phase>package</phase> 
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <archive>
+                <manifest>
+                  <mainClass>org.cloudmerge.priorityqueue.MultiwayMergeVCF2TPEDParallel</mainClass>
+                </manifest>
+              </archive>
+              <finalName>cloudmerge-parallelpriorityqueue</finalName>
+            </configuration>
+          </execution>
+          <execution>
+            <id>build-b</id>
+                 <phase>package</phase> 
+            <goals>
+              <goal>single</goal>
+            </goals>
+            <configuration>
+              <archive>
+                <manifest>
+                  <mainClass>org.cloudmerge.priorityqueue.SplitData</mainClass>
+                </manifest>
+              </archive>
+              <finalName>cloudmerge-ppqsplitdata</finalName>
+            </configuration>
           </execution>
         </executions>
       </plugin>

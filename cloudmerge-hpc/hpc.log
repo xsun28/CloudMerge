@@ -1,0 +1,27 @@
+File1 EOF
+File1 EOF
+File1 EOF
+File0 EOF
+merged_files 1_2
+File0 EOF
+merged_files 3_4
+i am rank 1, host is SunXiaobos-MBP.fios-router.home, sent merged files is 3_4, source is [], dest is 0
+i am rank 0, host is SunXiaobos-MBP.fios-router.home, local merged file is 1_2_3_4, src is [1], dest is -1
+File0 EOF
+merged_files 5_6
+File0 EOF
+File1 EOF
+File1 EOF
+File3 EOF
+File2 EOF
+File0 EOF
+merged_files 7_8_9_10
+i am rank 3, host is SunXiaobos-MBP.fios-router.home, sent merged files is 7_8_9_10, source is [], dest is 2
+i am rank 2, host is SunXiaobos-MBP.fios-router.home, local merged file is 5_6_7_8_9_10, src is [3], dest is -1
+File0 EOF
+File1 EOF
+i am rank 2, host is SunXiaobos-MBP.fios-router.home, sent merged files is 5_6_7_8_9_10, source is [], dest is 0
+i am rank 0, host is SunXiaobos-MBP.fios-router.home, local merged file is 1_2_3_4_5_6_7_8_9_10, src is [2], dest is -1
+File0 EOF
+File1 EOF
+Total running wall time is: 280

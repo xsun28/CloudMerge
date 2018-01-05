@@ -182,7 +182,11 @@ public class VCFMergeSpark {
                 		if(null == qual || qual.compareTo(quality) < 0) 
                 			continue;
                 		String[] fields = line.split("\\s+");
-                		String chrm = fields[0].substring(fields[0].indexOf("r")+1).trim();
+                		String chrm = "";
+        				if(fields[0].toLowerCase().startsWith("chr"))
+        					chrm = fields[0].substring(fields[0].indexOf("r")+1).trim();
+        				else 
+        					chrm = fields[0].trim();
                 		int chr_num = common.parseChrnum(chrm);
                 		if(chr_num < start_chr || chr_num > end_chr)
                 			continue;

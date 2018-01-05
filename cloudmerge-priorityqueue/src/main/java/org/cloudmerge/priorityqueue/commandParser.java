@@ -18,7 +18,7 @@ public class commandParser {
 		output.setRequired(true);
 		options.addOption(output);
 		Option chr_range = new Option("c","chr",true,"chromosome range");
-		chr_range.setRequired(true);
+		chr_range.setRequired(false);
 		options.addOption(chr_range);
 		Option qual = new Option("q","qual",true,"quality");
 		qual.setRequired(true);
@@ -29,6 +29,18 @@ public class commandParser {
 		Option genotype_col = new Option("g","genotype",true,"genotype column");
 		genotype_col.setRequired(true);
 		options.addOption(genotype_col);
+//		Option prefix = new Option("p","prefix",true,"chr prefix");
+//		prefix.setRequired(false);
+//		options.addOption(prefix);
+//		Option procnum = new Option("n","procnum",true,"process number");
+//		procnum.setRequired(true);
+//		options.addOption(procnum);
+		Option regions = new Option("r","region",true,"query regions");
+		regions.setRequired(false);
+		options.addOption(regions);
+		Option procid = new Option("p","procid",true,"process number");
+		procid.setRequired(false);
+		options.addOption(procid);
 		CommandLineParser parser = new PosixParser();
 		CommandLine cmd = null;
 		try{

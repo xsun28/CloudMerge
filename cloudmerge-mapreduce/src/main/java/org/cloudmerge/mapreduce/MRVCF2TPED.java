@@ -98,13 +98,17 @@ public class MRVCF2TPED extends Configured implements Tool {
 			if(null != qual && qual.compareTo(qual_filter) >= 0){
 			
 				String[] fields = line.split("\\s+");
-				String chrnum = fields[0].substring(fields[0].indexOf("r")+1).trim();
+				String chrnum = "";
+				if(fields[0].toLowerCase().startsWith("chr"))
+					chrnum = fields[0].substring(fields[0].indexOf("r")+1).trim();
+				else 
+					chrnum = fields[0].trim();
 				chrm = common.parseChrnum(chrnum);
 				if(chrm >= startchr && chrm <= endchr){         //filter out chrm outside of the chrm range
 					records++;
 					context.getCounter(ChrNumCounter.values()[chrm-1]).increment(1);  //count the chr records num
 					String outputFile;			
-					outputFile = fields[0].trim()+"/part";				//output file for this record  
+					outputFile = "chr"+chrnum+"/part";				//output file for this record  
 					String genotype = common.parseGenotype(line,genotype_col);
 					outkey.set(Long.parseLong(fields[1]));
 					boolean sample = false;                             //check if sample this record

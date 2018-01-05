@@ -13,5 +13,8 @@ done
 
 for ((i=$3;i<=$4;i=i+2)); do
 j=$((i+1))
+if ((j > $4)); then
+j=$i
+fi
 java -jar cloudmerge-1000genome.jar -i $dir  -o $2 -d $5 -c $i-$j -p $6 -n $7  -s
 done
