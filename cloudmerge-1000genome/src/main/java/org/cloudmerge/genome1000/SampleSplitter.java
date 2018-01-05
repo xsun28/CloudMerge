@@ -16,6 +16,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import htsjdk.tribble.readers.TabixReader;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.compress.compressors.CompressorException;
@@ -34,6 +37,9 @@ public class SampleSplitter {
 	class split_chr implements Callable<Integer>{
 		private static final String prefix = "ALL.chr";
 		private static final String suffix = ".phase3_shapeit2_mvncall_integrated_v5a.20130502.genotypes.vcf.gz";
+		private static final String suffixX = ".phase3_shapeit2_mvncall_integrated_v1b.20130502.genotypes.vcf.gz";
+		private static final String suffixY = ".phase3_integrated_v2a.20130502.genotypes.vcf.gz";
+		private static final String suffixM = ".phase3_callmom-v0_4.20130502.genotypes.vcf.gz";
 		private static final String header = "#CHROM";
 //		private BufferedReader bf;
 		
@@ -46,7 +52,21 @@ public class SampleSplitter {
 //		private String locker = getClass().getName().intern();
 		public split_chr(String input,String output,int chr,List<String> pos,String datasets,int sample_num){
 			try{
-				String path = input+prefix+chr2str(chr)+suffix;
+				String path = input+prefix+chr2str(chr);
+				switch(chr){
+				case 23:
+					path += suffixX;
+					break;
+				case 24:
+					path += suffixY;
+					break;
+				case 25:
+					path += suffixM;
+					break;
+				default:
+					path += suffix;
+					break;
+				}
 //				this.bf = new BufferedReader(new FileReader(path));
 				this.tr = new TabixReader(path);
 				this.output = output;
@@ -64,11 +84,12 @@ public class SampleSplitter {
 
 			String [] samples;
 			int [] sample_index = new int[num];
+			System.out.println("sample num: "+num);
 			List<String> sample_array = null;
 			List<PrintWriter> writers = null;
 			try{
 				String head_line = null;
-				System.out.println("here1");
+				
 				while(null!=(head_line=tr.readLine())){
 					
 					if(!head_line.startsWith(header)){
@@ -98,23 +119,28 @@ public class SampleSplitter {
 									sample_index[j++] = i;
 								}
 							}else{
-								for(int i=0;i<=splits.length;i++){
+								
+								for(int i=0;i<splits.length;i++){
 									if(i<9){
 										header_bf.append(splits[i]+"\t");
 										continue;
 									}
+
 									if(sample_array.contains(splits[i])){
 										sample_index[j++] = i;
-										writers.get(i-9).println(header_bf.toString()+splits[i]);
+										writers.get(j-1).println(header_bf.toString()+splits[i]);
+										
 									}
 								}
 							}
 							if(SampleSplitter.stack)
 								global_start = false;							
 						}
+						
 						break;
 					}
 				}
+				System.out.println("here1");
 				Integer k = 0;
 				if(pos.size()>0)
 					read_write_chr_pos(writers,sample_index,k);
@@ -218,6 +244,7 @@ public class SampleSplitter {
 	public SampleSplitter(String input, String output,String datasets, String chrs,String pos,int sample_num,boolean stack){
 		try{
 			this.chrs_pos = parse_chr(chrs,pos);
+
 			SampleSplitter.stack = stack;
 			pool = Executors.newCachedThreadPool();		
 			if(!stack){
@@ -244,8 +271,17 @@ public class SampleSplitter {
 	}
 
 	private int chr2int(String chr){
+		String chr1 = null;
+		
+		Pattern  pattern = Pattern.compile("[xym\\d]{1,2}",Pattern.CASE_INSENSITIVE);
+		Matcher matcher = pattern.matcher(chr);
+		if(matcher.find()){
+			int start = matcher.start();
+			int end = matcher.end();
+			chr1 = chr.substring(start,end);
+		}
 		int chrint = 0;
-		switch(chr.toUpperCase()){
+		switch(chr1.toUpperCase()){
 		case "X":
 			chrint = 23;
 			break;
@@ -256,7 +292,7 @@ public class SampleSplitter {
 			chrint = 25;
 			break;
 		default:
-			chrint = Integer.parseInt(chr);
+			chrint = Integer.parseInt(chr1);
 			break;
 		}
 		return chrint;
@@ -290,11 +326,12 @@ public class SampleSplitter {
 		for(int i=start;i<=end;i++)
 			chr_pos_map.put(i, new ArrayList<String>());	
 		System.out.println("chromosome from "+start+" to "+end);
-		if(pos!=null){
-			String[] positions = pos.trim().split(",");
+
+		if(pos!=null){		
 			for(String p: pos.trim().split(",")){
 				int chr_index = p.indexOf(":");
 				int chr = chr_index == -1?chr2int(p):chr2int(p.substring(0,chr_index));
+				System.out.println("chr "+chr);
 	//			int start_end[] = new int[2];
 	//			int pos_index = p.indexOf("-");
 	//			int start_pos = pos_index ==-1? Integer.parseInt(p.substring(chr_index+1)):Integer.parseInt(chrs.substring(chr_index+1,pos_index));

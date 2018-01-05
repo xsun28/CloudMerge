@@ -1,7 +1,7 @@
 #!/bin/bash
 START=$(date +%s)
-input=VCF/
-output=Result/
+input=$1
+output=$2
 
 i=0
 for file in $(ls $input); do
@@ -25,7 +25,7 @@ done
 
 i=0
 j=0
-java -jar cloudmerge-ppqsplitdata.jar ${output}/splits.csv $1 $2 $3 chr
+java -jar cloudmerge-ppqsplitdata.jar ${output}/splits.csv $3 $4 $5 $6
 for l in $(strings ${output}splits.csv); do
 echo $l
 i=$((i+1))

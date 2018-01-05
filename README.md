@@ -1,7 +1,6 @@
 # High-efficient Schemas of Distributed Systems for Sorted Merging of Omics Data
 
-Schemas implemented in Java 7 
-for merging multiple VCF files into one VCF file or one TPED file using Apache big-data platforms---MapReduce,HBase and Spark respectively. Source codes can be slightly modified to fit into other types of sorted merging of Omics data.
+Schemas implemented in Java 8 for merging multiple VCF files into one VCF file or one TPED file using Apache big-data platforms---MapReduce,HBase and Spark respectively. Source codes can be slightly modified to fit into other types of sorted merging of Omics data.
 
 <br>
 
@@ -127,9 +126,19 @@ Node Type | CPU | Memory | Disk
 	**-n**	| Number of samples to be extracted | Yes
 	**-s**	| If all chromosomes of a sample are stacked in one file? | No
 * Example  
-  We provide a script for indexing 1000Genome VCF files using tabix and splitting 1000Genome VCFs into individual files of interested samples and genomic regions. To run the script:   
+  We provide a script for indexing 1000Genome VCF files using tabix and splitting 1000Genome VCFs into individual VCF files of interested samples and genomic regions. To run the script:   
 	
-		$ cp -p  $project_home_dir/src/main/resources/vcftools-merge.sh .    
+		$ inputDir=1000Genome/
+		$ outputDir=Splits/
+		$ startChr=1
+		$ endChr=24  ## X=23,Y=24,MT=25
+		$ samples=HG00096,HG00097
+		$ regions=chr1:1,chr2:1,chr3:1,chr4:1
+		$ samplenum=2
+		$ cp -p  $project_home_dir/cloudmerge-1000genome/src/main/resources/run-splitter.sh .
+		$ chmod 755 run-splitter.sh
+		$ nohup ./run-splitter.sh  $inputDir $outputDir $startChr $endChr $samples $regions $samplenum > split.log 2>&1 		 
+	Note: The script must under the same directory as the jar files.
 	
 ### <a name="loading"> </a> Loading Data to HDFS
 	$ cd $data_dir/
@@ -162,7 +171,7 @@ We provide a Linux script for running VCFTools. You can simply follow the instru
 	
 	$ cd $data_dir/
 	
-	$ cp -p  $project_home_dir/src/main/resources/vcftools-merge.sh .
+	$ cp -p  $project_home_dir/vcftools-merge.sh .
 	
 	$ chmod 755 vcftools-merge.sh
 	
@@ -275,16 +284,30 @@ We provide a Linux script for running VCFTools. You can simply follow the instru
 ### <a name="tped-merge"></a> Merge VCF files into one TPED file 
  
 #### 1. Multiway-merge implementation (benchmark) 
-* Command example
+* Single multiway-merge:
+	
+	* Command example
 		
-		$ java -jar cloudmerge-priorityqueue.jar 
-			-i input/ 
-			-o result.tped 
-			-c 1-25 
-			-q PASS 
-			-s true 
-			-g 9	 	
-
+			$ java -jar cloudmerge-priorityqueue.jar 
+				-i input/ 
+				-o result.tped 
+				-c 1-25 
+				-q PASS 
+				-s true 
+				-g 9	 	
+* Parallel multiway-merge:
+	* This implementation is based on Tabix and requires VCF files compressed as .gz file and tabix-indexed. We provide a script for running it and a command example as follows:
+	
+			$ cp -p $project_home_dir/cloudmerge-priorityqueue/src/main/resources/run-parapq.sh .
+			$ inputDir=VCF/
+			$ outputDir=Result/
+  			$ startChr=1
+  			$ endChr=26
+  			$ procnum=4	
+  			$ chr_prefix=chr
+  			$ nohup ./run-parapq.sh $inputDir $outputDir $startChr $endChr $procnum $chr_prefix > parapq.log 2>&1 
+  		Note: The script must under the same directory as the jar files.	 
+	  
 #### 2. MapReduce schema	  
 Note: all recommend platform configurations and platform-specific options are same (except for -g) as above.   
 
@@ -342,7 +365,50 @@ Note: all recommend platform configurations and platform-specific options are sa
   		-c 1-25 
   		-q PASS 
   		-g 9,10
-	 	
+
+#### 5. HPC implementation
+The HPC schema is implemented using Python and mpi4py module. It is running on AWS Virtual Private Cloud (VPC)created by StarCluster toolkit. Please follow the steps below to initiate a VPC cluster and run our HPC implementation:		  
+
+1.	Add your _AWS_ACCESS_KEY_ID_, _AWS_SECRET_ACCESS_KEY_, _AWS_USER_ID_, in the _[aws info]_ section in the StarCluster's config file.
+
+2.	Add _userdata_scripts = bootstrap.sh_ in the _[cluster smallcluster]_ section in the StarCluster's config file
+
+3.	Creating an EBS volume (a NFS file system):  
+			
+		$ starcluster createvolume --name=cloudmerge-hpc --shutdown-volume-host 500 us-east-1a
+4. Get the volume id of the new created EBS volume:  
+
+		$ starcluster listvolumes --name cloudmerge-hpc
+5. Add the _volume_id_ in the _[volume cloudmerge]_ section in the StarCluster's config file. The volume will be mounted under the path _/home/ubuntu/cloudmerge/_
+
+6. Start, copy python scripts and connect to the cluster:  
+		
+		$ starcluster start mpicluster
+ 	 	$ starcluster put mpicluster $project_home_dir/cloudmerge-hpc/*.py /home/ubuntu/cloudmerge/
+ 	 	$ starcluster sshmaster mpicluster
+ 	 	$ cd /home/ubuntu/cloudmerge
+7. Create a host file listing all node names in separate lines:   
+		
+		$ cat << EOF > /home/ubuntu/cloudmerge/hosts
+		  master  
+		  node001  
+		  node002 
+		  EOF  
+		
+8. Run python scripts (an example):  
+	
+		$ procnum=12
+		$ inputDir=/home/ubuntu/cloudmerge/input/
+		$ outputDir=/home/ubuntu/cloudmerge/output/
+		$ filenum=30
+		$ startChr=1
+		$ endChr=22
+		$ genotype_col=9
+		$ filter=PASS
+		$ mpiexec -n $procnum --hostfile /home/ubuntu/cloudmerge/hosts python -m mpi4py /home/ubuntu/cloudmerge/mpi_merge.py -i $inputDir -o $outputDir -n $filenum -l $startChr -u $endChr -g $genotype_col -f $filter
+	Note: Input and output directory must on the created EBS volume to be shared with all nodes in the cluster.
+	
+
 <br>
 <br>  
 
