@@ -24,7 +24,7 @@ j=$((i+1))
 if ((j > $4)); then
 j=$i
 fi
-java -jar cloudmerge-1000genome.jar -i $dir  -o $2 -d $5 -c $i-$j -p $6 -n $7  -s
+java -jar cloudmerge-1000genome.jar -i $dir  -o $2  -c $i-$j  -n $5  -s -d $6 -p $7
 done
 
 i=1

@@ -69,6 +69,10 @@ class multiway_merger(object):
             except csv.Error:
                 print('CSV Null Error')
                 continue
+            except StopIteration:
+                print('File'+str(i)+' EOF')
+                line = None
+                break
         
         while not self.quality.qualified(line):
             try:

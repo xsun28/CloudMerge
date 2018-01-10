@@ -128,6 +128,7 @@ public class SampleSplitter {
 
 									if(sample_array.contains(splits[i])){
 										sample_index[j++] = i;
+//										logger.debug("header is "+header_bf.toString()+splits[i]);
 										writers.get(j-1).println(header_bf.toString()+splits[i]);
 										
 									}
@@ -140,13 +141,13 @@ public class SampleSplitter {
 						break;
 					}
 				}
-				System.out.println("here1");
+				
 				Integer k = 0;
 				if(pos.size()>0)
 					read_write_chr_pos(writers,sample_index,k);
 				else
 					read_write_chr(writers,sample_index,k);
-
+				System.out.println("here1");
 			}catch(IOException ioe){
 				logger.debug(ioe.getMessage());
 				System.err.println(ioe.getMessage());
@@ -163,10 +164,12 @@ public class SampleSplitter {
 		private void read_write_chr_pos(List<PrintWriter> writers,int[] sample_index,Integer k) throws IOException{
 			String line = null;
 			for(String start_end: pos){
+//				logger.debug("current query is "+start_end);
 				TabixReader.Iterator iter = tr.query(start_end);					
 				StringBuffer sb = new StringBuffer();
 				while(iter != null && (line = iter.next()) != null){
 					++k;
+//					System.out.println("Read line "+k.intValue());
 					if(k%10000==0)
 						System.out.println("Read line "+k.intValue());
 					String[] splits = line.split("\\s+");
@@ -214,6 +217,7 @@ public class SampleSplitter {
 		private List<PrintWriter> create_writers(String[]samples){
 			List<PrintWriter> writers = new ArrayList<>();
 			try{
+				
 				for(String sample: samples){
 					String file = null;
 					if(SampleSplitter.stack)
@@ -288,7 +292,7 @@ public class SampleSplitter {
 		case "Y":
 			chrint = 24;
 			break;
-		case "MT":
+		case "M":
 			chrint = 25;
 			break;
 		default:
@@ -329,6 +333,7 @@ public class SampleSplitter {
 
 		if(pos!=null){		
 			for(String p: pos.trim().split(",")){
+				logger.debug("pos "+p);
 				int chr_index = p.indexOf(":");
 				int chr = chr_index == -1?chr2int(p):chr2int(p.substring(0,chr_index));
 				System.out.println("chr "+chr);
@@ -338,8 +343,11 @@ public class SampleSplitter {
 	//			int end_pos = pos_index == -1? -1: Integer.parseInt(chrs.substring(pos_index+1));
 	//			start_end[0] = start_pos;
 	//			start_end[1] = end_pos;
-				if(chr_pos_map.containsKey(chr))
-					chr_pos_map.get(chr).add(p);
+				if(chr_pos_map.containsKey(chr)){
+					String query = p.toUpperCase().startsWith("CHR")?p.substring(3):p;
+					chr_pos_map.get(chr).add(query);
+					logger.debug("added position is "+query);
+					}
 			}
 		}
 		return chr_pos_map;

@@ -55,7 +55,12 @@ def splits(filenum,size):
     return tuple(sendcounts),tuple(disp)
 
 #------------------------------------------------------------------------------
-
+def get_output_name(localname,rcvname):
+    if rcvname is None:
+        return localname
+    start = localname.split('_')[0]
+    end = rcvname[-1].split('_')[-1]
+    return start+'_'+end
 
 
 ###############################################################################
@@ -105,7 +110,8 @@ comm.Scatterv([sendbuff,sendcounts,disp,MPI.DOUBLE],rcvbuff,root=0)
 #    os.system('bunzip2 '+file)
 
 local_input_files = map(lambda x: input_path+str(int(x))+'.bz2',rcvbuff)
-local_merged_files = "_".join(map(lambda x: str(int(x)),rcvbuff))
+#local_merged_files = "_".join(map(lambda x: str(int(x)),rcvbuff))
+local_merged_files = str(int(rcvbuff[0]))+'_'+str(int(rcvbuff[-1]))
 merger = mm.multiway_merger(local_input_files, output_path+local_merged_files,lower_chr,upper_chr,qfilter,genotype_col,merge_type='vcf')
 merger.start()
 print('merged_files %s'%local_merged_files)
@@ -116,7 +122,7 @@ while True:
   dest = get_dest(rank,size,rounds)
   rounds = rounds+1   
   if len(src) == 0:
-     if rank > 0: 
+     if rank > 0:           
          comm.send(local_merged_files,dest=dest,tag=0)
      print('i am rank %d, host is %s, sent merged files is %s, source is %s, dest is %d' %(rank,host,local_merged_files,str(src),dest))
      break         ## send the filename to dest process and quit
@@ -124,7 +130,8 @@ while True:
       local_files = [output_path+local_merged_files]
       rcv_merged_file = comm.recv(source=src[0],tag=0)
       local_files.extend([output_path+rcv_merged_file])
-      local_merged_files = '_'.join([local_merged_files,rcv_merged_file])
+#      local_merged_files = '_'.join([local_merged_files,rcv_merged_file])
+      local_merged_files = get_output_name(local_merged_files,[rcv_merged_file])
       print('i am rank %d, host is %s, local merged file is %s, src is %s, dest is %d' %(rank,host,local_merged_files,str(src),dest))
   else:
       local_files = [output_path+local_merged_files]
@@ -134,7 +141,9 @@ while True:
           rcv_file = comm.recv(source=s,tag=0)
           local_files.extend([output_path+rcv_file])
           rcv_merged_files.extend([rcv_file])
-      local_merged_files = '_'.join([local_merged_files]+rcv_merged_files)
+#      local_merged_files = '_'.join([local_merged_files]+rcv_merged_files)
+      local_merged_files = get_output_name(local_merged_files,rcv_merged_files)
+
   
   if rank == 0:
       src = get_source(rank,size,rounds)

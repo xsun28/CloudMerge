@@ -15,6 +15,8 @@ class quality(object):
     
         
     def qualified(self,line):
+        if line is None:
+            return False
         if len(line) == 0:
             return False
         if line[0].startswith('#'):

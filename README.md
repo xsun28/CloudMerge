@@ -54,7 +54,8 @@ Node Type | CPU | Memory | Disk
 ### 3. VCFTools installation  
  
  * [Install VCFTools](http://vcftools.sourceforge.net/examples.html)
- * [Install Tabix](http://www.danielecook.com/installing-tabix-and-samtools-on-mac/)
+ * [Install Tabix](http://www.htslib.org/download/)  
+ 	Note: You need to have gcc, zlib-devel, bzip2-devel and liblzma for installing Tabix
     	
 ### 4. [Maven Installation](https://maven.apache.org/install.html)
 
@@ -132,9 +133,9 @@ Node Type | CPU | Memory | Disk
 		$ inputDir=1000Genome/
 		$ outputDir=Splits/
 		$ startChr=1
-		$ endChr=24  ## X=23,Y=24,MT=25
+		$ endChr=24  ## X=23,Y=24,M=25
 		$ samples=HG00096,HG00097
-		$ regions=chr1:1,chr2:1,chr3:1,chr4:1
+		$ regions=chr1:1,chr2:1,chr3:1,chr4:1,chrX:1,ChrM:1
 		$ samplenum=2
 		$ cp -p  $project_home_dir/cloudmerge-1000genome/src/main/resources/run-splitter.sh .
 		$ chmod 755 run-splitter.sh

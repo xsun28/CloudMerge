@@ -217,7 +217,7 @@ public class MultiwayMergeVCF2TPEDParallel {
 	                    //logger.debug("inner printed line is "+result.toString().trim());
 	                }
 	                outputLine = new StringBuilder();
-	                outputLine.append(currentPos.getChr()).append("\t").append(currentPos.getSNP_ID())
+	                outputLine.append(chrToStr(currentPos.getChr())).append("\t").append(currentPos.getSNP_ID())
 	                .append("\t0\t").append(currentPos.getSeq()+"\t");
 	                genotypes = new String[file_no];
 	                ref = currentPos.getRef();
